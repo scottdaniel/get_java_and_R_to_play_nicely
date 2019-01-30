@@ -88,4 +88,47 @@ JAR=${JAVA_HOME}/../bin/jar \
 JAVA_LIBS="-L${JAVA_HOME}/lib/server -ljvm" \
 JAVA_CPPFLAGS="-I${JAVA_HOME}/../include -I${JAVA_HOME}/../include/darwin"
 ```
+## 7
+Make sure `/Library/Frameworks/R.framework/Versions/3.5/Resources/etc/Makeconf`
+has the lines:
+```
+JAVA_LIBS="-L${JAVA_HOME}/lib/server -ljvm" \
+JAVA_CPPFLAGS="-I${JAVA_HOME}/../include -I${JAVA_HOME}/../include/darwin"
+```
+If it doesn't, you need to `sudo vim` and add/edit them in.
 
+At this point, I was able to go into R and do:
+```
+install.packages("rJava")
+library(rJava)
+```
+and it loaded with no errors, so it appeared that Clang 7 wasn't needed
+However, Clang 7 has OpenMP support which can speed up compiling and whatnot
+so I configured it like this:
+
+## 8 (Optional)
+Make R find Clang
+
+Create, or edit the file `~/.R/Makevars`
+and add the following (with your username obviously):
+```
+CLANG=/Users/user_name/opt/clang+llvm-7.0.0-x86_64-apple-darwin
+CC=$(CLANG)/bin/clang
+CXX=$(CLANG)/bin/clang++
+CXX1X=$(CLANG)/bin/clang++
+CXXFLAGS=-I$(CLANG)/include
+```
+And go back to 
+`/Library/Frameworks/R.framework/Versions/3.5/Resources/etc/Makeconf`
+and edit
+`LDFLAGS = -L/usr/local/lib`
+to be
+`LDFLAGS = -L/usr/local/lib -L/Users/user_name/opt/clang+llvm-7.0.0-x86_64-apple-darwin/lib -lomp`
+Now, run this to check it works:
+```
+> R CMD config --ldflags
+```
+and you should get something like this:
+```
+-fopenmp -L/usr/local/lib -L/Users/danielsg/opt/clang+llvm-7.0.0-x86_64-apple-darwin/lib -lomp -F/Library/Frameworks/R.framework/.. -framework R -lpcre -llzma -lbz2 -lz -licucore -lm -liconv
+```
