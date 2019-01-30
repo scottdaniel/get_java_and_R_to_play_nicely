@@ -40,3 +40,52 @@ Now for the tricky part, you need the Java Runtime Environment (JRE) but if you 
 Even worse (for me), installing the latest Java Development Kit (JDK v. 11.0.2) didn't install a JRE!
 This is what (FINALLY) worked for me: https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 I downloaded and installed Java SE Development Kit 8u202
+
+## 4
+Now for some ~/.bash_profile stuff:
+```
+> /usr/libexec/java_home -V
+Matching Java Virtual Machines (1):
+    1.8.0_202, x86_64:	"Java SE 8"	/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home
+
+/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home
+```
+From that, I put the following lines in my ~/.bash_profile (or it may be your .bashrc / .profile):
+```
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8.0_202)
+```
+Then, I restarted terminal and was able to see:
+```
+> echo $JAVA_HOME
+/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home
+```
+
+## 5
+Edit a plist:
+```
+> sudo vim /Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Info.plist
+```
+Go to the line
+```
+<string>CommandLine</string>
+```
+and add <string>JNI</string> immediately after so it looks like this:
+```
+<string>CommandLine</string>
+<string>JNI</string>
+```
+
+## 6
+Now we tell R to find Java:
+```
+> JAVA_HOME=${JAVA_HOME}/jre
+> sudo R CMD javareconf \
+JAVA_HOME=${JAVA_HOME} \
+JAVA=${JAVA_HOME}/../bin/java \
+JAVAC=${JAVA_HOME}/../bin/javac \
+JAVAH=${JAVA_HOME}/../bin/javah \
+JAR=${JAVA_HOME}/../bin/jar \
+JAVA_LIBS="-L${JAVA_HOME}/lib/server -ljvm" \
+JAVA_CPPFLAGS="-I${JAVA_HOME}/../include -I${JAVA_HOME}/../include/darwin"
+```
+
