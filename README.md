@@ -3,9 +3,18 @@ Guide to get Java and R to play nicely on Mac OS X El Capitan
 
 Versions:
 R version 3.5.2 (2018-12-20)
+
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
+
 Running under: macOS Mojave 10.14.2
 
+and Rstudio.Version():
+```$mode
+[1] "desktop"
+
+$version
+[1] ‘1.1.463’
+```
 # Preliminary
 This took me the better half of a day to figure out, so I thought a guide would be useful to avoid future frustration. Of course, YMMV.
 
