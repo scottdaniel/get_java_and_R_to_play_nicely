@@ -102,7 +102,7 @@ At this point, I was able to go into R and do:
 install.packages("rJava")
 library(rJava)
 ```
-and it loaded with no errors (insert squeel of happiness), so it appeared that Clang 7 wasn't needed.
+and it loaded with no errors (insert squeal of happiness), so it appeared that Clang 7 wasn't needed.
 
 However, Clang 7 has OpenMP support which can speed up compiling and whatnot so I configured it like this:
 
