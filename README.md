@@ -16,7 +16,7 @@ $version
 [1] ‘1.1.463’
 ```
 # Preliminary
-This took me the better half of a day to figure out, so I thought a guide would be useful to avoid future frustration. Of course, YMMV.
+I wanted this because I like using two R packages that require Java to play nicely with R (`xlsx` and `Crossover`). This took me the better half of a day to figure out, so I thought a guide would be useful to avoid future frustration. Of course, YMMV.
 
 This is approximately based off of: http://www.owsiak.org/r-3-4-rjava-macos-and-even-more-mess/
 
@@ -102,9 +102,9 @@ At this point, I was able to go into R and do:
 install.packages("rJava")
 library(rJava)
 ```
-and it loaded with no errors, so it appeared that Clang 7 wasn't needed
-However, Clang 7 has OpenMP support which can speed up compiling and whatnot
-so I configured it like this:
+and it loaded with no errors (insert squeel of happiness), so it appeared that Clang 7 wasn't needed.
+
+However, Clang 7 has OpenMP support which can speed up compiling and whatnot so I configured it like this:
 
 ## 8 (Optional)
 Make R find Clang
@@ -120,10 +120,13 @@ CXXFLAGS=-I$(CLANG)/include
 ```
 And go back to 
 `/Library/Frameworks/R.framework/Versions/3.5/Resources/etc/Makeconf`
+
 and edit
 `LDFLAGS = -L/usr/local/lib`
+
 to be
 `LDFLAGS = -L/usr/local/lib -L/Users/user_name/opt/clang+llvm-7.0.0-x86_64-apple-darwin/lib -lomp`
+
 Now, run this to check it works:
 ```
 > R CMD config --ldflags
